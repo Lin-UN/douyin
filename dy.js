@@ -101,30 +101,14 @@ function main() {
       sleep(2000, 500);
     }
 
-    // 总是返回好友列表，无论是否为最后一个好友
+    // 发送完毕后，先返回到聊天列表页面，再返回到消息主页面
+    back();
+    sleep(1500, 300);
     back();
     sleep(2000, 500);
     
-    // 多次尝试返回到消息列表页面
-    var retryCount = 0;
-    while (retryCount < 3 && !text("消息").exists()) {
-      back();
-      sleep(1500, 300);
-      retryCount++;
-    }
-    
-    // 确保已经回到消息列表页面
-    if (text("消息").exists()) {
-      sleep(1000, 200);
-    } else {
-      toast("无法返回消息列表，尝试重新进入");
-      // 重新点击消息按钮
-      var messageTextWidget = text("消息").className("android.widget.TextView").findOnce();
-      if (messageTextWidget) {
-        clickWidgetByPosition(messageTextWidget);
-        sleep(2000, 300);
-      }
-    }
+    // 等待返回到消息列表页面
+    sleep(1000, 200);
   }
 
   kill_app("抖音");
