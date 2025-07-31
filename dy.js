@@ -1,5 +1,6 @@
 var password = "12345";
 var friendNames = ["好友昵称1", "好友昵称2", "好友昵称3"];
+var messageText = "OK"; // 要发送的文字消息
 
 sleep(1000);
 main();
@@ -45,7 +46,7 @@ function main() {
 
   for (let i = 0; i < friendNames.length; i++) {
     let currentFriendName = friendNames[i];
-    toast("正在给 " + currentFriendName + " 发送表情...");
+    toast("正在给 " + currentFriendName + " 发送消息...");
 
     var friendWidget = text(currentFriendName).findOnce();
     if (!friendWidget) {
@@ -79,26 +80,34 @@ function main() {
     clickWidgetByPosition(friendWidget);
     sleep(3000, 100);
 
-    clickWidgetByPosition(
-      className("android.widget.ImageView").desc("表情").untilFindOne()
-    );
-    sleep(1000, 200);
-
-    var btnEmoji = className("android.widget.Button").desc("互动表情").findOnce();
-    if (btnEmoji) {
-      clickWidgetByPosition(btnEmoji);
+    // 点击输入框
+    var inputBox = className("android.widget.EditText").findOnce();
+    if (inputBox) {
+      clickWidgetByPosition(inputBox);
       sleep(1000, 200);
-    }
-
-    clickWidgetByPosition(
-      className("android.widget.TextView").text("比心").untilFindOne()
-    );
-    sleep(3000, 1000);
-
-    if (i < friendNames.length - 1) {
-      back();
+      
+      // 输入文字
+      inputBox.setText(messageText);
+      sleep(1000, 200);
+      
+      // 点击发送按钮
+      var sendButton = text("发送").findOnce() || desc("发送").findOnce();
+      if (sendButton) {
+        clickWidgetByPosition(sendButton);
+      } else {
+        // 如果找不到发送按钮，尝试按回车键
+        keycode("KEYCODE_ENTER");
+      }
       sleep(2000, 500);
     }
+
+    // 总是返回好友列表，无论是否为最后一个好友
+    back();
+    sleep(2000, 500);
+    
+    // 等待返回到消息列表页面
+    text("消息").untilFindOne();
+    sleep(1000, 200);
   }
 
   kill_app("抖音");
